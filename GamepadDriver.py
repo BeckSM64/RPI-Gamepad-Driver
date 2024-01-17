@@ -40,6 +40,8 @@ events = (
 	uinput.BTN_TR2,
     uinput.ABS_X + (0, 255, 0, 0),
     uinput.ABS_Y + (0, 255, 0, 0),
+    uinput.ABS_RX + (0, 255, 0, 0),
+    uinput.ABS_RY + (0, 255, 0, 0),
 )
 
 device = uinput.Device(events)
@@ -50,6 +52,8 @@ x_value = 128 #8 bit center
 y_value = 128 #8 bit center
 device.emit(uinput.ABS_X, x_value, syn=False)
 device.emit(uinput.ABS_Y, y_value)
+device.emit(uinput.ABS_RX, x_value, syn=False)
+device.emit(uinput.ABS_RY, y_value)
 
 def analogRead(chn):
     bus.write_byte(address,cmd+chn)
@@ -64,9 +68,14 @@ try:
         val_Z = GPIO.input(Z_Pin)
         val_Y = analogRead(0)
         val_X = analogRead(2)
+        val_RY = analogRead(1)
+        val_RX = analogRead(3)
         print("Click: %d, Y: %d, X: %d" % (val_Z, val_Y, val_X))
         device.emit(uinput.ABS_X, int(val_X))
         device.emit(uinput.ABS_Y, int(val_Y))
+        print("Click: %d, Y: %d, X: %d" % (val_Z, val_RY, val_RX))
+        device.emit(uinput.ABS_RX, int(val_RX))
+        device.emit(uinput.ABS_RY, int(val_RY))
 
         # handle button inputs here
         if GPIO.input(AButton) == GPIO.LOW:
