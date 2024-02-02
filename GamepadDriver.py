@@ -114,6 +114,26 @@ def convertValue(oldValue):
 
     return newValue
 
+def convertValue2(oldValue):
+
+    # Convert the value
+    if oldValue < 128:
+        oldRange = (127 - -65)
+        newRange = (127 - 0)
+        newValue = (((oldValue - -65) * newRange) / oldRange) + 0
+    elif oldValue > 128:
+        oldRange = (186 - 129)
+        newRange = (255 - 129)
+        newValue = (((oldValue - 129) * newRange) / oldRange) + 129
+    else:
+        return oldValue
+
+    # Check if value is negative, then force zero
+    if newValue < 0:
+        newValue = 0
+
+    return newValue
+
 try:
     while True:
         val_Z = GPIO.input(Z_Pin)
@@ -122,6 +142,7 @@ try:
         val_X = convertValue(val_X - 79)
         val_RY = analogRead(1)
         val_RX = analogRead(3)
+        val_RX = convertValue2(val_RX - 67)
         print("Click: %d, Y: %d, X: %d" % (val_Z, val_Y, val_X))
         device.emit(uinput.ABS_X, int(val_X))
         device.emit(uinput.ABS_Y, int(val_Y))
