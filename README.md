@@ -1,6 +1,8 @@
 # Raspberry Pi Portable Gamepad Driver
 This is a driver I wrote for the gamepad for my Raspberry Pi Portable running RetroPie. All of the buttons are connected to available GPIO pins as well as the two HiLetgo Analog Joy Sticks.
 
+![Raspberry Pi Portable](./images/RaspberryPiPortable.jpg)
+
 # Motivation
 The main motivation to write this instead of using something like [GPIOnext](https://github.com/mholgatem/GPIOnext) was the joysticks. I couldn't seem to find anywhere online that solved the problem of converting the analog value from the sticks to a digital value that the pie can read and use for retro gaming. I'm sure someone has done it, but I had no luck when it came to these specific joysticks, or something similar like the AdaFruit analog sticks. And analog sticks were a requirement for my project as I was intending to use this portable RetroPie to play Playstation 1 games, mainly Ape Escape, which requires analog input.
 
