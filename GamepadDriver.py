@@ -7,8 +7,6 @@ address = 0x48
 bus=smbus.SMBus(1)
 cmd=0x40
 
-Z_Pin = 24
-
 # Pins associated with corresponding button
 AButton = 15
 BButton = 16
@@ -31,7 +29,6 @@ R3Button = 17
 
 # Setup GPIO Mode
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(Z_Pin, GPIO.IN, GPIO.PUD_UP) # R3/L3 button
 GPIO.setup(AButton, GPIO.IN, pull_up_down=GPIO.PUD_UP) # a button
 GPIO.setup(BButton, GPIO.IN, pull_up_down=GPIO.PUD_UP) # b button
 GPIO.setup(XButton, GPIO.IN, pull_up_down=GPIO.PUD_UP) # x button
@@ -77,8 +74,7 @@ events = (
 
 device = uinput.Device(events)
 
-# Center joystick output 
-# syn=False to emit an "atomic" (128, 128) event.
+# Center joystick output
 x_value = 128 #8 bit center
 y_value = 128 #8 bit center
 device.emit(uinput.ABS_X, x_value, syn=False)
@@ -136,17 +132,16 @@ def convertValue2(oldValue):
 
 try:
     while True:
-        val_Z = GPIO.input(Z_Pin)
         val_Y = analogRead(0)
         val_X = analogRead(2)
         val_X = convertValue(val_X - 79)
         val_RY = analogRead(1)
         val_RX = analogRead(3)
         val_RX = convertValue2(val_RX - 67)
-        print("Click: %d, Y: %d, X: %d" % (val_Z, val_Y, val_X))
+        print("Y: %d, X: %d" % (val_Y, val_X))
         device.emit(uinput.ABS_X, int(val_X))
         device.emit(uinput.ABS_Y, int(val_Y))
-        print("Click: %d, Y: %d, X: %d" % (val_Z, val_RY, val_RX))
+        print("RY: %d, RX: %d" % (val_RY, val_RX))
         device.emit(uinput.ABS_RX, int(val_RX))
         device.emit(uinput.ABS_RY, int(val_RY))
 
