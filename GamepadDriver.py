@@ -255,6 +255,16 @@ try:
         else:
             device.emit(uinput.BTN_THUMBR, 0)
 
+        # Power down console button combos
+        if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadRightButton) == GPIO.LOW and GPIO.input(XButton):
+            print("Powering Down...")
+            subprocess.run(["sudo", "poweroff"])
+
+        # Reset console button combos
+        if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadLeftButton) == GPIO.LOW and GPIO.input(AButton):
+            print("Resetting...")
+            subprocess.run(["sudo", "reboot"])
+
 except:
     GPIO.cleanup()
     device.destroy()
