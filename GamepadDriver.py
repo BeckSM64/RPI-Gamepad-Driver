@@ -90,6 +90,7 @@ def analogRead(chn):
 def analogWrite(value):
     bus.write_byte_data(address,cmd,value)
 
+# TODO: These functions are lazy, hardcoded, and bad. Need to rework
 def convertValue(oldValue):
 
     # Convert the value
