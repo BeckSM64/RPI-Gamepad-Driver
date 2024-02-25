@@ -105,10 +105,6 @@ def convertValue(oldValue):
     else:
         return oldValue
 
-    # Check if value is negative, then force zero
-    if newValue < 0:
-        newValue = 0
-
     return newValue
 
 def convertValue2(oldValue):
@@ -124,10 +120,6 @@ def convertValue2(oldValue):
         newValue = (((oldValue - 129) * newRange) / oldRange) + 129
     else:
         return oldValue
-
-    # Check if value is negative, then force zero
-    if newValue < 0:
-        newValue = 0
 
     return newValue
 
