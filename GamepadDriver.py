@@ -2,6 +2,8 @@ import RPi.GPIO as GPIO
 import smbus
 import uinput
 import subprocess
+import xmltodict
+import argparse
 
 address = 0x48
 bus=smbus.SMBus(1)
@@ -82,6 +84,16 @@ device.emit(uinput.ABS_Y, y_value)
 device.emit(uinput.ABS_RX, x_value, syn=False)
 device.emit(uinput.ABS_RY, y_value)
 
+# Values for analog sticks to overwrite with xml config
+analog_values_dict = {
+    "lx_min" : 0,
+    "lx_mid" : 128,
+    "lx_max" : 255,
+    "rx_min" : 0,
+    "rx_mid" : 128,
+    "rx_max": 255
+}
+
 def analogRead(chn):
     bus.write_byte(address,cmd+chn)
     value = bus.read_byte(address)
@@ -120,18 +132,51 @@ def convertValue(oldValue, oldMin, oldMax):
     # Return converted value
     return newValue
 
+def read_xml_config(path_to_xml_config):
+    with open(path_to_xml_config, "r") as xml_config_file:
+        doc = xmltodict.parse(xml_config_file.read())
+        analog_values_dict["lx_min"] = int(doc["gamepad_config"]["left_analog"]["x_axis"]["min"])
+        analog_values_dict["lx_mid"] = int(doc["gamepad_config"]["left_analog"]["x_axis"]["mid"])
+        analog_values_dict["lx_max"] = int(doc["gamepad_config"]["left_analog"]["x_axis"]["max"])
+        analog_values_dict["rx_min"] = int(doc["gamepad_config"]["right_analog"]["x_axis"]["min"])
+        analog_values_dict["rx_mid"] = int(doc["gamepad_config"]["right_analog"]["x_axis"]["mid"])
+        analog_values_dict["rx_max"] = int(doc["gamepad_config"]["right_analog"]["x_axis"]["max"])
+
+        analog_values_dict["ly_min"] = int(doc["gamepad_config"]["left_analog"]["y_axis"]["min"])
+        analog_values_dict["ly_mid"] = int(doc["gamepad_config"]["left_analog"]["y_axis"]["mid"])
+        analog_values_dict["ly_max"] = int(doc["gamepad_config"]["left_analog"]["y_axis"]["max"])
+        analog_values_dict["ry_min"] = int(doc["gamepad_config"]["right_analog"]["y_axis"]["min"])
+        analog_values_dict["ry_mid"] = int(doc["gamepad_config"]["right_analog"]["y_axis"]["mid"])
+        analog_values_dict["ry_max"] = int(doc["gamepad_config"]["right_analog"]["y_axis"]["max"])
+
 try:
+
+    # Parse args, path to XML config file
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path_to_xml_config")
+    args = parser.parse_args()
+
+    # Read in the XML config file
+    read_xml_config(args.path_to_xml_config)
+    # Calculate the offset between the read mid value and what the midpoint should be (128)
+    # TODO: Fix this for if value is LESS than the mid value (offset to the left),
+    # currently assumes it is offset to the right side of the midpoint
+    LX_OFFSET = analog_values_dict["lx_mid"] - 128
+    RX_OFFSET = analog_values_dict["rx_mid"] - 128
+    LY_OFFSET = analog_values_dict["ly_mid"] - 128
+    RY_OFFSET = analog_values_dict["ry_mid"] - 128
     while True:
         val_Y = analogRead(0)
         val_X = analogRead(2)
-        val_X = convertValue(val_X - 91, -16, 160)
+        val_X = convertValue(val_X - LX_OFFSET, analog_values_dict["lx_min"] - LX_OFFSET, analog_values_dict["lx_max"] - LX_OFFSET)
+        val_Y = convertValue(val_Y - LY_OFFSET, analog_values_dict["ly_min"] - LY_OFFSET, analog_values_dict["ly_max"] - LY_OFFSET)
         val_RY = analogRead(1)
         val_RX = analogRead(3)
-        val_RX = convertValue(val_RX - 75, -70, 175)
-        #print("Y: %d, X: %d" % (val_Y, val_X))
+        val_RX = convertValue(val_RX - RX_OFFSET, analog_values_dict["rx_min"] - RX_OFFSET, analog_values_dict["rx_max"] - RX_OFFSET)
+        val_RY = convertValue(val_RY - RY_OFFSET, analog_values_dict["ry_min"] - RY_OFFSET, analog_values_dict["ry_max"] - RY_OFFSET)
         device.emit(uinput.ABS_X, int(val_X))
         device.emit(uinput.ABS_Y, int(val_Y))
-        print("RY: %d, RX: %d" % (val_RY, val_RX))
+        #print("LX: %d, LY: %d, RX: %d, RY: %d" % (val_X, val_Y, val_RX, val_RY))
         device.emit(uinput.ABS_RX, int(val_RX))
         device.emit(uinput.ABS_RY, int(val_RY))
 
@@ -240,15 +285,20 @@ try:
         else:
             device.emit(uinput.BTN_THUMBR, 0)
 
-        # Power down console button combos
+        # Power down console
         if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadRightButton) == GPIO.LOW and GPIO.input(XButton):
             print("Powering Down...")
             subprocess.run(["sudo", "poweroff"])
 
-        # Reset console button combos
+        # Reset console
         if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadLeftButton) == GPIO.LOW and GPIO.input(AButton):
             print("Resetting...")
             subprocess.run(["sudo", "reboot"])
+
+        # Run analog callibration script
+        if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadDownButton) == GPIO.LOW and GPIO.input(BButton):
+            print("Callibrating...")
+
 
 except:
     GPIO.cleanup()

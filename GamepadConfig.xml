@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gamepad_config>
+    <left_analog>
+        <x_axis>
+            <min>50</min>
+            <mid>214</mid>
+            <max>252</max>
+        </x_axis>
+        <y_axis>
+            <min>0</min>
+            <mid>135</mid>
+            <max>255</max>
+        </y_axis>
+    </left_analog>
+    <right_analog>
+        <x_axis>
+            <min>3</min>
+            <mid>196</mid>
+            <max>249</max>
+        </x_axis>
+        <y_axis>
+            <min>7</min>
+            <mid>129</mid>
+            <max>245</max>
+        </y_axis>
+    </right_analog>
+</gamepad_config>
