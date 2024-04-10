@@ -4,6 +4,7 @@ import uinput
 import subprocess
 import xmltodict
 import argparse
+import time
 
 address = 0x48
 bus=smbus.SMBus(1)
@@ -182,122 +183,209 @@ try:
 
         # handle button inputs here
         if GPIO.input(AButton) == GPIO.LOW:
-            print("A Button Pressed")
+            print("=== A Button Pressed ===")
             device.emit(uinput.BTN_A, 1)
         else:
             device.emit(uinput.BTN_A, 0)
 
         if GPIO.input(BButton) == GPIO.LOW:
-            print("B Button Pressed")
+            print("=== B Button Pressed ===")
             device.emit(uinput.BTN_B, 1)
         else:
             device.emit(uinput.BTN_B, 0)
 
         if GPIO.input(XButton) == GPIO.LOW:
-            print("X Button Pressed")
+            print("=== X Button Pressed ===")
             device.emit(uinput.BTN_X, 1)
         else:
             device.emit(uinput.BTN_X, 0)
 
         if GPIO.input(YButton) == GPIO.LOW:
-            print("Y Button Pressed")
+            print("=== Y Button Pressed ===")
             device.emit(uinput.BTN_Y, 1)
         else:
             device.emit(uinput.BTN_Y, 0)
 
         if GPIO.input(DPadUpButton) == GPIO.LOW:
-            print("D-Pad Up Button Pressed")
+            print("=== D-Pad Up Button Pressed ===")
             device.emit(uinput.BTN_DPAD_UP, 1)
         else:
             device.emit(uinput.BTN_DPAD_UP, 0)
 
         if GPIO.input(DPadDownButton) == GPIO.LOW:
-            print("D-Pad Down Button Pressed")
+            print("=== D-Pad Down Button Pressed ===")
             device.emit(uinput.BTN_DPAD_DOWN, 1)
         else:
             device.emit(uinput.BTN_DPAD_DOWN, 0)
 
         if GPIO.input(DPadLeftButton) == GPIO.LOW:
-            print("D-Pad Left Button Pressed")
+            print("=== D-Pad Left Button Pressed ===")
             device.emit(uinput.BTN_DPAD_LEFT, 1)
         else:
             device.emit(uinput.BTN_DPAD_LEFT, 0)
 
         if GPIO.input(DPadRightButton) == GPIO.LOW:
-            print("D-Pad Right Button Pressed")
+            print("=== D-Pad Right Button Pressed ===")
             device.emit(uinput.BTN_DPAD_RIGHT, 1)
         else:
             device.emit(uinput.BTN_DPAD_RIGHT, 0)
 
         if GPIO.input(StartButton) == GPIO.LOW:
-            print("Start Button Pressed")
+            print("=== Start Button Pressed ===")
             device.emit(uinput.BTN_START, 1)
         else:
             device.emit(uinput.BTN_START, 0)
 
         if GPIO.input(SelectButton) == GPIO.LOW:
-            print("Select Button Pressed")
+            print("=== Select Button Pressed ===")
             device.emit(uinput.BTN_SELECT, 1)
         else:
             device.emit(uinput.BTN_SELECT, 0)
 
         if GPIO.input(VolumeUpButton) == GPIO.LOW:
-            print("Volume Up Button Pressed")
+            print("=== Volume Up Button Pressed ===")
             subprocess.run(["amixer", "-q", "-M", "sset", "Headphone", "5%+"])
 
         if GPIO.input(VolumeDownButton) == GPIO.LOW:
-            print("Volume Down Button Pressed")
+            print("=== Volume Down Button Pressed ===")
             subprocess.run(["amixer", "-q", "-M", "sset", "Headphone", "5%-"])
 
         if GPIO.input(L2Button) == GPIO.LOW:
-            print("L2 Button Pressed")
+            print("=== L2 Button Pressed ===")
             device.emit(uinput.BTN_TL2, 1)
         else:
             device.emit(uinput.BTN_TL2, 0)
 
         if GPIO.input(L1Button) == GPIO.LOW:
-            print("L1 Button Pressed")
+            print("=== L1 Button Pressed ===")
             device.emit(uinput.BTN_TL, 1)
         else:
             device.emit(uinput.BTN_TL, 0)
 
         if GPIO.input(R2Button) == GPIO.LOW:
-            print("R2 Button Pressed")
+            print("=== R2 Button Pressed ===")
             device.emit(uinput.BTN_TR2, 1)
         else:
             device.emit(uinput.BTN_TR2, 0)
 
         if GPIO.input(R1Button) == GPIO.LOW:
-            print("R1 Button Pressed")
+            print("=== R1 Button Pressed ===")
             device.emit(uinput.BTN_TR, 1)
         else:
             device.emit(uinput.BTN_TR, 0)
 
         if GPIO.input(L3Button) == GPIO.LOW:
-            print("L3 Button Pressed")
+            print("=== L3 Button Pressed ===")
             device.emit(uinput.BTN_THUMBL, 1)
         else:
             device.emit(uinput.BTN_THUMBL, 0)
 
         if GPIO.input(R3Button) == GPIO.LOW:
-            print("R3 Button Pressed")
+            print("=== R3 Button Pressed ===")
             device.emit(uinput.BTN_THUMBR, 1)
         else:
             device.emit(uinput.BTN_THUMBR, 0)
 
         # Power down console
         if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadRightButton) == GPIO.LOW and GPIO.input(XButton):
-            print("Powering Down...")
+            print("=== Powering Down... ===")
             subprocess.run(["sudo", "poweroff"])
 
         # Reset console
         if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadLeftButton) == GPIO.LOW and GPIO.input(AButton):
-            print("Resetting...")
+            print("=== Resetting... ===")
             subprocess.run(["sudo", "reboot"])
 
         # Run analog callibration script
         if GPIO.input(L2Button) == GPIO.LOW and GPIO.input(R2Button) == GPIO.LOW and GPIO.input(L1Button) == GPIO.LOW and GPIO.input(R1Button) == GPIO.LOW and GPIO.input(DPadDownButton) == GPIO.LOW and GPIO.input(BButton):
-            print("Callibrating...")
+            print("=== Callibrating... ===")
+            time.sleep(1)
+            all_callibrated = False
+
+            doc = None
+            with open("/home/pi/GamepadConfig.xml", "r") as xml_config_file:
+                doc = xmltodict.parse(xml_config_file.read())
+                xml_config_file.close()
+
+            while not all_callibrated:
+                for key, value in analog_values_dict.items():
+                    submitted = False
+                    while not submitted:
+                        value = None
+                        if key == "lx_min":
+                            print(f"=== Hold L Left and Press A: {key}, {analogRead(0)} ===")
+                            value = analogRead(0)
+                        elif key == "lx_mid":
+                            print(f"=== Keep Neutral and Press A: {key}, {analogRead(0)} ===")
+                            value = analogRead(0)
+                        elif key == "lx_max":
+                            print(f"=== Hold L Right and Press A: {key}, {analogRead(0)} ===")
+                            value = analogRead(0)
+                        elif key == "rx_min":
+                            print(f"=== Hold R Left and Press A: {key}, {analogRead(1)} ===")
+                            value = analogRead(1)
+                        elif key == "rx_mid":
+                            print(f"=== Hold Neutral and Press A: {key}, {analogRead(1)} ===")
+                            value = analogRead(1)
+                        elif key == "rx_max":
+                            print(f"=== Hold R Right and Press A: {key}, {analogRead(1)} ===")
+                            value = analogRead(1)
+                        elif key == "ly_min":
+                            print(f"=== Hold L Down and Press A: {key}, {analogRead(2)} ===")
+                            value = analogRead(2)
+                        elif key == "ly_mid":
+                            print(f"=== Hold Neutral and Press A: {key}, {analogRead(2)} ===")
+                            value = analogRead(2)
+                        elif key == "ly_max":
+                            print(f"=== Hold L Up and Press A: {key}, {analogRead(2)} ===")
+                            value = analogRead(2)
+                        elif key == "ry_min":
+                            print(f"=== Hold R Down and Press A: {key}, {analogRead(3)} ===")
+                            value = analogRead(3)
+                        elif key == "ry_mid":
+                            print(f"=== Hold Neutral and Press A: {key}, {analogRead(3)} ===")
+                            value = analogRead(3)
+                        else:
+                            print(f"=== Hold R Up and Press A: {key}, {analogRead(3)} ===")
+                            value = analogRead(3)
+
+                        if GPIO.input(AButton) == GPIO.LOW:
+                            print(f"=== Submitted: {key} ===")
+                            # Write the value to the analog direction dictionary and the xml config file
+
+                            with open("/home/pi/GamepadConfig.xml", "w") as xml_config_file:
+                                xml_config_file.write(xmltodict.unparse(doc))
+                                if key == "lx_min":
+                                    doc["gamepad_config"]["left_analog"]["x_axis"]["min"] = value
+                                elif key == "lx_mid":
+                                    doc["gamepad_config"]["left_analog"]["x_axis"]["mid"] = value
+                                elif key == "lx_max":
+                                    doc["gamepad_config"]["left_analog"]["x_axis"]["max"] = value
+                                elif key == "rx_min":
+                                    doc["gamepad_config"]["right_analog"]["x_axis"]["min"] = value
+                                elif key == "rx_mid":
+                                    doc["gamepad_config"]["right_analog"]["x_axis"]["mid"] = value
+                                elif key == "rx_max":
+                                    doc["gamepad_config"]["right_analog"]["x_axis"]["max"] = value
+                                elif key == "ly_min":
+                                    doc["gamepad_config"]["left_analog"]["y_axis"]["min"] = value
+                                elif key == "ly_mid":
+                                    doc["gamepad_config"]["left_analog"]["y_axis"]["mid"] = value
+                                elif key == "ly_max":
+                                    doc["gamepad_config"]["left_analog"]["y_axis"]["max"] = value
+                                elif key == "ry_min":
+                                    doc["gamepad_config"]["right_analog"]["y_axis"]["min"] = value
+                                elif key == "ry_mid":
+                                    doc["gamepad_config"]["right_analog"]["y_axis"]["mid"] = value
+                                else:
+                                    doc["gamepad_config"]["right_analog"]["y_axis"]["max"] = value
+                                xml_config_file.close()
+
+                            analog_values_dict[key] = value
+                            submitted = True
+                            time.sleep(1)
+                all_callibrated = True
+                print("=== Callibration Complete ===")
 
 
 except:
