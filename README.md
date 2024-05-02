@@ -3,6 +3,8 @@ This is a driver I wrote for the gamepad for my Raspberry Pi Portable running Re
 
 ![Raspberry Pi Portable](./images/RaspberryPiPortable.jpg)
 
+If you want to build this, you can find the design and parts list [here](https://www.thingiverse.com/thing:6469374)
+
 # Phyiscal Parts I Used and Tested With
 I used a few specific parts that this software interfaces with. The buttons are just tact switches wired directly to the GPIO pins. There is nothing special about those. But for the analog sticks, I used HiLetgo Joysticks I found on Amazon. For the Analog Digital Converter (ADC), I'm using the NOYITO PCF8591 Analog to Digital Converter that I also found on amazon. I'll list links to where I bought each part below.
 
